@@ -29,6 +29,37 @@ type SignupRequest struct {
 	YearsOfExperience   int     `json:"years_of_experience,omitempty"`
 }
 
+// Check if the user exists before signup
+func (app *application) checkUserHandler(w http.ResponseWriter, r *http.Request) {
+	email := r.URL.Query().Get("email") // Get email from query parameter
+
+	if email == "" {
+		http.Error(w, `{"status": "error", "message": "Email is required"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Check if user exists in the database
+	var user User
+	result := DB.Where("email = ?", email).First(&user)
+
+	if result.Error != nil {
+		// User does not exist → Frontend will show signup form
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"exists": false,
+		})
+		return
+	}
+
+	// User exists → Frontend will redirect to Dashboard
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"exists": true,
+		"role":   user.Role,
+	})
+}
+
 // Signup API
 func (app *application) signupHandler(w http.ResponseWriter, r *http.Request) {
 	var req SignupRequest
@@ -43,6 +74,7 @@ func (app *application) signupHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	// Check if the email already exists
 	var existingUser User
 	if err := DB.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
@@ -55,6 +87,7 @@ func (app *application) signupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Create the User
 	user := User{
 		FullName:           req.FullName,
 		Email:              req.Email,
@@ -77,17 +110,25 @@ func (app *application) signupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Role-specific handling
 	switch req.Role {
 	case "Entrepreneur":
+		// Create an Entrepreneur entry
 		entrepreneur := Entrepreneur{
-			UserID:      user.ID,
-			StartupName: req.StartupName,
-			Industry:    req.Industry,
-			Description: req.Description,
-			Budget:      req.Budget,
-			Timeframe:   req.Timeframe,
+			UserID: user.ID,
 		}
 		DB.Create(&entrepreneur)
+
+		// Store startup details separately
+		startup := Startup{
+			EntrepreneurID: entrepreneur.ID,
+			StartupName:    req.StartupName,
+			Industry:       req.Industry,
+			Description:    req.Description,
+			Budget:         req.Budget,
+			Timeframe:      req.Timeframe,
+		}
+		DB.Create(&startup)
 
 	case "Investor":
 		investor := Investor{
@@ -115,22 +156,4 @@ func (app *application) signupHandler(w http.ResponseWriter, r *http.Request) {
 		"status":  "success",
 		"message": "User registered successfully! Please verify your account.",
 	})
-}
-
-// getting the users from the database
-func (app *application) getUsers(w http.ResponseWriter, r *http.Request) {
-	var users []User
-
-	// Fetch all users from the database
-	if err := DB.Find(&users).Error; err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Failed to retrieve users.",
-		})
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
 }
