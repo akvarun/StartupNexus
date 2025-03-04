@@ -19,7 +19,7 @@ func InitDB() {
 	}
 
 	// AutoMigrate tables
-	err = DB.AutoMigrate(&User{}, &Entrepreneur{}, &Investor{}, &Mentor{}, &Startup{})
+	err = DB.AutoMigrate(&User{}, &Entrepreneur{}, &Investor{}, &Mentor{}, &Startup{}, &Connection{})
 	if err != nil {
 		log.Fatal("Migration failed:", err)
 	}

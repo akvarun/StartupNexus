@@ -15,7 +15,7 @@ type User struct {
 	VerificationStatus string  `json:"verification_status" gorm:"default:'pending'"`
 }
 
-// Entrepreneurs Table (No Startup Fields)
+// Entrepreneurs Table
 type Entrepreneur struct {
 	gorm.Model
 	UserID uint `json:"user_id" gorm:"not null;unique;foreignKey:UserID;constraint:OnDelete:CASCADE;"`
@@ -41,7 +41,7 @@ type Mentor struct {
 	VerificationProof string `json:"verification_proof"`
 }
 
-// Startups Table (Updated)
+// Startups Table
 type Startup struct {
 	gorm.Model
 	EntrepreneurID uint    `json:"entrepreneur_id" gorm:"not null;foreignKey:EntrepreneurID;constraint:OnDelete:CASCADE;"`
@@ -50,4 +50,12 @@ type Startup struct {
 	Description    string  `json:"description"`
 	Budget         float64 `json:"budget"`
 	Timeframe      string  `json:"timeframe"`
+}
+
+// Connections Table (New)
+type Connection struct {
+	gorm.Model
+	SenderID   uint   `json:"sender_id" gorm:"not null"`       // Investor or Mentor
+	ReceiverID uint   `json:"receiver_id" gorm:"not null"`     // Entrepreneur
+	Status     string `json:"status" gorm:"default:'pending'"` // pending, accepted, rejected
 }

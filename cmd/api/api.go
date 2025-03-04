@@ -28,6 +28,12 @@ func (app *application) mount() http.Handler {
 	r.Route("/v1", func(r chi.Router) {
 		r.Post("/signup", app.signupHandler)
 		r.Get("/user/check", app.checkUserHandler)
+		r.Get("/connection/pending", app.getPendingConnectionsHandler)
+		r.Post("/connection/request", app.requestConnectionHandler)
+		r.Put("/connection/accept/{id}", app.acceptConnectionHandler)
+		r.Delete("/connection/reject/{id}", app.rejectConnectionHandler)
+		r.Get("/connection/my", app.getAcceptedConnectionsHandler)
+		r.Get("/startup/all", app.getAllStartupsHandler)
 	})
 
 	return r
