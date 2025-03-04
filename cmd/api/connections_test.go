@@ -189,8 +189,6 @@ func TestRejectConnectionHandler(t *testing.T) {
 		// Unmarshal JSON response correctly (single object, not a list)
 		var responseBody map[string]interface{}
 		json.Unmarshal(rr.Body.Bytes(), &responseBody)
-
-		// ✅ Ensure status is "success"
 		assert.Equal(t, "success", responseBody["status"])
 		assert.Contains(t, responseBody["message"], "Connection request")
 	})
