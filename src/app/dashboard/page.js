@@ -232,7 +232,7 @@ export default function Dashboard() {
                                         <p className={styles.postStyle}>Description: {post.description}</p>
                                         <p className={styles.postStyle}>Budget: {post.budget}</p>
                                         <p className={styles.postStyle}>Timeframe: {post.timeframe}</p>
-                                        <hr class="separator"></hr>
+                                        <hr className={styles.separator}></hr>
                                         <div className={styles.buttonContainer}>
                                             <button className={styles.likeButton}>Like</button>
                                             <button className={styles.commentButton}>Comment</button>
