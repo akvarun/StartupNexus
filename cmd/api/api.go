@@ -55,7 +55,8 @@ func (app *application) mount() http.Handler {
 		r.Post("/startup/comment", app.addCommentHandler)
 		r.Get("/startup/comments/{id}", app.getCommentsHandler)
 		r.Post("/startup/report", app.reportStartupHandler)
-
+		r.Post("/message/send", app.handleSendMessage)
+		r.Get("/message/inbox", app.handleGetMessages)
 	})
 
 	return r

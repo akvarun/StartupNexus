@@ -24,6 +24,7 @@ func setupTestDB() {
 		&Comment{},
 		&Like{},
 		&Report{},
+		&Message{},
 	)
 	if err != nil {
 		log.Fatalf("Failed to migrate test database: %v", err)

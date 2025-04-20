@@ -81,3 +81,10 @@ type Report struct {
 	StartupID  uint   `json:"startup_id"`
 	Reason     string `json:"reason"`
 }
+
+type Message struct {
+	gorm.Model
+	SenderEmail   string `json:"from" gorm:"not null"`
+	ReceiverEmail string `json:"to" gorm:"not null"`
+	Content       string `json:"content" gorm:"type:text;not null"`
+}

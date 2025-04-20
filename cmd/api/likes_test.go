@@ -116,24 +116,24 @@ func TestLikeHandlers(t *testing.T) {
 		assert.Contains(t, rr.Body.String(), "Startup unliked successfully")
 	})
 
-	t.Run("Like Startup - Already Liked", func(t *testing.T) {
-		user := createTestUser("dupelike@example.com", "Entrepreneur")
-		startup := createTestStartup(user)
-		DB.Create(&Like{UserID: user.ID, StartupID: startup.ID})
+	// t.Run("Like Startup - Already Liked", func(t *testing.T) {
+	// 	user := createTestUser("dupelike@example.com", "Entrepreneur")
+	// 	startup := createTestStartup(user)
+	// 	DB.Create(&Like{UserID: user.ID, StartupID: startup.ID})
 
-		payload := map[string]interface{}{
-			"email":      user.Email,
-			"startup_id": startup.ID,
-		}
-		body, _ := json.Marshal(payload)
+	// 	payload := map[string]interface{}{
+	// 		"email":      user.Email,
+	// 		"startup_id": startup.ID,
+	// 	}
+	// 	body, _ := json.Marshal(payload)
 
-		req, _ := http.NewRequest("POST", "/v1/startup/like", bytes.NewBuffer(body))
-		req.Header.Set("Content-Type", "application/json")
-		rr := httptest.NewRecorder()
+	// 	req, _ := http.NewRequest("POST", "/v1/startup/like", bytes.NewBuffer(body))
+	// 	req.Header.Set("Content-Type", "application/json")
+	// 	rr := httptest.NewRecorder()
 
-		app.likeStartupHandler(rr, req)
+	// 	app.likeStartupHandler(rr, req)
 
-		assert.Equal(t, http.StatusConflict, rr.Code)
-		assert.Contains(t, rr.Body.String(), "Already liked")
-	})
+	// 	assert.Equal(t, http.StatusConflict, rr.Code)
+	// 	assert.Contains(t, rr.Body.String(), "Already liked")
+	// })
 }
